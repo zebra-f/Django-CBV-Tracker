@@ -44,6 +44,7 @@
 
         from cbv_tracker import cbv_tracker
 
+
         @cbv_tracker()
         class SignupView(CreateView):
 
@@ -81,13 +82,14 @@
 
 - ## Example 2 (settings parameter)
 
-  - Method Resolution Order `{'mro': True}` gets printed only once upon startup of the server.
+  Method Resolution Order `{'mro': True}` gets printed only once upon startup of the server.
 
-  - `{'exclude': ['__init__', 'setup', 'dispatch', 'get']}` will ommit listed methods from being `printed`
+  `{'exclude': ['__init__', 'setup', 'dispatch', 'get']}` will ommit listed methods from being `printed`
 
   - `views.py`
 
         from cbv_tracker import cbv_tracker
+
 
         @cbv_tracker(
             settings={
@@ -138,7 +140,7 @@
 
 - ## Example 3 (settings parameter)
 
-  - Only the body of the first method in its MRO gets printed, in this case (`{'explicit': 'get}'`) `'exclude'` key is ignored
+  Only the body of the first method in its MRO gets printed, in the following case `'exclude'` key is ignored and `get` method is `printed`.
 
   - `views.py`
 
@@ -147,7 +149,7 @@
 
         @cbv_tracker(
             settings={
-                'exclude': ['__init__', 'setup', 'dispatch'],
+                'exclude': ['__init__', 'setup', 'dispatch' 'get'],
                 'explicit': 'get'
             }
         )
