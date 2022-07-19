@@ -1,6 +1,9 @@
 import inspect
 
 
+__all__ = ["cbv_tracker"]
+
+
 def method_decorator(original_method, settings, cls_name, qualname):
 
     def decorator(*args, **kwargs):
@@ -106,3 +109,4 @@ def cbv_tracker(settings=None):
         return cls
     
     return wrapper
+

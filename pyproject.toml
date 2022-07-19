@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "cbv_tracker"
-version = "0.0.1"
+version = "0.0.4"
 authors = [
   { name="Rafal Zebrowski", email="zebraf.dev@gmail.com" },
 ]
