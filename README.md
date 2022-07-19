@@ -84,7 +84,7 @@
 
   Method Resolution Order `{'mro': True}` gets printed only once upon startup of the server.
 
-  `{'exclude': ['__init__', 'setup', 'dispatch', 'get']}` will ommit listed methods from being `printed`
+  `{'exclude': ['__init__', 'setup', 'dispatch', 'get']}` will ommit listed methods from being `printed`.
 
   - `views.py`
 
@@ -112,17 +112,17 @@
   - `terminal`
 
         ✔ SignupView
-        1, SignupView,
-        2, CreateView,
-        3, SingleObjectTemplateResponseMixin,
-        4, TemplateResponseMixin,
-        5, BaseCreateView,
-        6, ModelFormMixin,
-        7, FormMixin,
-        8, SingleObjectMixin,
-        9, ContextMixin,
-        10, ProcessFormView,
-        11, View
+          |___ 1, SignupView,
+          |___ 2, CreateView,
+          |___ 3, SingleObjectTemplateResponseMixin,
+          |___ 4, TemplateResponseMixin,
+          |___ 5, BaseCreateView,
+          |___ 6, ModelFormMixin,
+          |___ 7, FormMixin,
+          |___ 8, SingleObjectMixin,
+          |___ 9, ContextMixin,
+          |___ 10, ProcessFormView,
+          |___ 11, View
         System check identified no issues (0 silenced).
         July 19, 2022 - 16:18:13
         Django version 4.0.5, using settings 'mysite.settings'
