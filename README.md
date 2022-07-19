@@ -61,7 +61,7 @@
 
         from cbv_tracker import cbv_tracker
 
-        @cbv_tracker(setting={
+        @cbv_tracker(settings={
             'mro': True,
             'exclude': ['__init__', '__setup__', '__dispatch__']
         })
@@ -114,7 +114,7 @@
 
         from cbv_tracker import cbv_tracker
 
-        @cbv_tracker(setting={
+        @cbv_tracker(settings={
             'exclude': ['__init__', '__setup__', '__dispatch__'],
             'explicit': 'get'
         })
