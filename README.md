@@ -1,39 +1,63 @@
-## About:
+# About:
 
-- ### cbv-tracker is a simple Python package that works alongside Django's Class Based Views by `printing` methods that were called to process `HTTP request` and return `HTTP response`
+- ### cbv-tracker is a simple Python package (used as a `class` decorator) that works alongside Django's Class Based Views by `printing` method names in order that they were called by Django to process `HTTP request` in `views.py`
+  ##### Side note: it can be used with any Python's `class` (not exclusive to Django's Class Based Views)
 
 ---
 
-## Installation:
+# Installation:
 
-- ### Requirements: python 3.8 or later
+- ### Requirements:
+
+  - Python 3
 
         pip install cbv-tracker
 
 ---
 
-## How to use:
+# How to use:
 
-- ### Example 1 (default)
+- #### import `cbv_tracker`
 
-  `views.py:`
+      from cbv_tracker import cbv_tracker
+
+- #### decorate Django's Class View (or any other class)
+
+      from cbv_tracker import cbv_tracker
+
+
+      @cbv_tracker()
+      class AboutView(TemplateView):
+          template_name = "about.html"
+
+- #### you're free to pass a `dictionary` settings parameter ( `@cbv_tracker({})` ) with any of these keys:
+
+  - `'mro'` `<class 'bool'>` (Example 2)
+
+  - `'exclude'` `<class 'list'>` (Example 2)
+
+  - `'explicit'` `<class 'str'>` (Example 3)
+
+- ## Example 1 (default)
+
+  - `views.py`
 
         from cbv_tracker import cbv_tracker
 
         @cbv_tracker()
         class SignupView(CreateView):
 
-        template_name = 'registration/signup.html'
-        form_class = CustomUserCreationForm
-        success_url = reverse_lazy('login')
+            template_name = 'registration/signup.html'
+            form_class = CustomUserCreationForm
+            success_url = reverse_lazy('login')
 
-        def get(self, request, *args, **kwargs):
-            if request.user.is_authenticated:
-                return HttpResponseRedirect(reverse('home:home-page'))
-            else:
-                return super().get(request, *args, **kwargs)
+            def get(self, request, *args, **kwargs):
+                if request.user.is_authenticated:
+                    return HttpResponseRedirect(reverse('home:home-page'))
+                else:
+                    return super().get(request, *args, **kwargs)
 
-  `terminal/output`:
+  - `terminal`
 
         ✔ SignupView
         System check identified no issues (0 silenced).
@@ -55,42 +79,48 @@
         • SignupView → SingleObjectTemplateResponseMixin ↘  get_template_names(self)
         [19/Jul/2022 16:12:20] "GET /signup/ HTTP/1.1" 200 5778
 
-- ### Example 2 (settings parameter- every key-value pair is optional)
+- ## Example 2 (settings parameter)
 
-  `views.py`:
+  - Method Resolution Order `{'mro': True}` gets printed only once upon startup of the server.
+
+  - `{'exclude': ['__init__', 'setup', 'dispatch', 'get']}` will ommit listed methods from being `printed`
+
+  - `views.py`
 
         from cbv_tracker import cbv_tracker
 
-        @cbv_tracker(settings={
-            'mro': True,
-            'exclude': ['__init__', '__setup__', '__dispatch__']
-        })
+        @cbv_tracker(
+            settings={
+                'mro': True,
+                'exclude': ['__init__', 'setup', 'dispatch', 'get']
+            }
+        )
         class SignupView(CreateView):
 
-        template_name = 'registration/signup.html'
-        form_class = CustomUserCreationForm
-        success_url = reverse_lazy('login')
+            template_name = 'registration/signup.html'
+            form_class = CustomUserCreationForm
+            success_url = reverse_lazy('login')
 
-        def get(self, request, *args, **kwargs):
-            if request.user.is_authenticated:
-                return HttpResponseRedirect(reverse('home:home-page'))
-            else:
-                return super().get(request, *args, **kwargs)
+            def get(self, request, *args, **kwargs):
+                if request.user.is_authenticated:
+                    return HttpResponseRedirect(reverse('home:home-page'))
+                else:
+                    return super().get(request, *args, **kwargs)
 
-  `terminal/output`:
+  - `terminal`
 
         ✔ SignupView
-        |___ 1, SignupView,
-        |___ 2, CreateView,
-        |___ 3, SingleObjectTemplateResponseMixin,
-        |___ 4, TemplateResponseMixin,
-        |___ 5, BaseCreateView,
-        |___ 6, ModelFormMixin,
-        |___ 7, FormMixin,
-        |___ 8, SingleObjectMixin,
-        |___ 9, ContextMixin,
-        |___ 10, ProcessFormView,
-        |___ 11, View
+        1, SignupView,
+        2, CreateView,
+        3, SingleObjectTemplateResponseMixin,
+        4, TemplateResponseMixin,
+        5, BaseCreateView,
+        6, ModelFormMixin,
+        7, FormMixin,
+        8, SingleObjectMixin,
+        9, ContextMixin,
+        10, ProcessFormView,
+        11, View
         System check identified no issues (0 silenced).
         July 19, 2022 - 16:18:13
         Django version 4.0.5, using settings 'mysite.settings'
@@ -103,34 +133,37 @@
         • SignupView → FormMixin ↘ ------------------------ get_initial(self)
         • SignupView → FormMixin ↘ ------------------------ get_prefix(self)
         • SignupView → TemplateResponseMixin ↘ ------------ render_to_response(self, context, **response_kwargs)
-        • SignupView → SingleObjectTemplateResponseMixin ↘  get_template_names(self)
+        • SignupView → SingleObjectTemplateResponseMixin ↘ get_template_names(self)
         [19/Jul/2022 16:18:14] "GET /signup/ HTTP/1.1" 200
 
-  <span style="color:orange">Note that the Method Resolution Order gets printed only once upon startup of the server</span>
+- ## Example 3 (settings parameter)
 
-- ### Example 3 (settings parameter- every key-value pair is optional)
+  - Only the body of the first method in its MRO gets printed, in this case (`{'explicit': 'get}'`) `'exclude'` key is ignored
 
-  `views.py:`
+  - `views.py`
 
         from cbv_tracker import cbv_tracker
 
-        @cbv_tracker(settings={
-            'exclude': ['__init__', '__setup__', '__dispatch__'],
-            'explicit': 'get'
-        })
+
+        @cbv_tracker(
+            settings={
+                'exclude': ['__init__', 'setup', 'dispatch'],
+                'explicit': 'get'
+            }
+        )
         class SignupView(CreateView):
 
-        template_name = 'registration/signup.html'
-        form_class = CustomUserCreationForm
-        success_url = reverse_lazy('login')
+            template_name = 'registration/signup.html'
+            form_class = CustomUserCreationForm
+            success_url = reverse_lazy('login')
 
-        def get(self, request, *args, **kwargs):
-            if request.user.is_authenticated:
-                return HttpResponseRedirect(reverse('home:home-page'))
-            else:
-                return super().get(request, *args, **kwargs)
+            def get(self, request, *args, **kwargs):
+                if request.user.is_authenticated:
+                    return HttpResponseRedirect(reverse('home:home-page'))
+                else:
+                    return super().get(request, *args, **kwargs)
 
-  `terminal/output`:
+  - `terminal`
 
         ✔ SignupView
         System check identified no issues (0 silenced).
@@ -146,5 +179,3 @@
                     return super().get(request, *args, **kwargs)
 
         [19/Jul/2022 16:22:46] "GET /signup/ HTTP/1.1" 200 5778
-
-  <span style="color:orange">Note that only the body of the first method in its MRO gets printed, in this case `'exclude': ['__init__', '__setup__', '__dispatch__']` setting is ignored</span>

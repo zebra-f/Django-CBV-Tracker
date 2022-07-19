@@ -35,12 +35,13 @@ def cbv_tracker(settings=None):
         if not isinstance(settings, dict):
             raise TypeError(
                 f"""cbv-tracker decorator expects a <class 'dict'> type as a first argument, instead {type(settings)} was given.
-                    Example: settings={{'mro': True, 'exclude': ['__init__', '__dispatch__']}}
+                    Example: settings={{'mro': True, 'exclude': ['__init__', 'dispatch']}}
                 """
                 )
     else:
         settings = dict()
     
+
     def wrapper(cls):
 
         print(f"✔ {cls.__name__}")
@@ -69,7 +70,7 @@ def cbv_tracker(settings=None):
                 if not isinstance(settings['exclude'], list):
                     raise TypeError(
                         f"""settings key 'exclude' expects a <class 'list'> type value, instead {settings['exclude']} was given.
-                            Example: settings={{'exclude': ['__init__', '__dispatch__']}}
+                            Example: settings={{'exclude': ['__init__', 'dispatch']}}
                         """
                         )
                 return True
@@ -86,14 +87,17 @@ def cbv_tracker(settings=None):
 
 
         settings['longest'] = 1
+
         for name, function in inspect.getmembers(cls, predicate=inspect.isfunction):
             qualname = get_qualname(function.__qualname__)
             
             if len(qualname) + len(cls.__name__) > settings['longest']:
                 settings['longest'] = len(qualname) + len(cls.__name__)
 
+
             def setattr_callback():
                 setattr(cls, name, method_decorator(function, settings, cls.__name__, qualname))
+
 
             if explicit():
                 if name == settings['explicit']:
